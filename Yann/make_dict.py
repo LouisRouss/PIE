@@ -8,10 +8,8 @@ def reset_dict(dict_dir):
 
 def get_df_news(data_folder, news_to_read, format_cols):
     df = pd.read_parquet(data_folder + 'financial_data' + news_to_read + '.parquet.gzip')
-    for col in df.columns:
-        if col not in format_cols:
-            df = df.drop(columns=[col])
-    return df
+    df = df.rename(columns = {'Article':'Text', 'Journalists':'Author'})
+    return df[format_cols]
 
 def get_dict(dict_dir):
     f = open(dict_dir,"r+b")
@@ -40,9 +38,9 @@ def make_dict(source_df, companies_to_get, dict_dir, format_cols):
     check_df_format(source_df, format_cols)
     companies_to_get = [company_name.lower() for company_name in companies_to_get]
     for company_name in companies_to_get:
-        company_df = source_df[source_df.Article.apply(lambda article : company_name in article.lower())]
+        company_df = source_df[source_df[format_cols[0]].apply(lambda text : company_name in text.lower())]
         if company_name in keys:
-            data_dict[company_name] = pd.merge(data_dict[company_name], company_df,how='outer', on='Article')
+            data_dict[company_name] = pd.merge(data_dict[company_name], company_df,how='outer', on=format_cols[0])
         else :
             data_dict[company_name] = company_df
     dump_dict(data_dict, dict_dir)
