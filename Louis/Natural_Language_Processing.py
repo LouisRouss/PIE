@@ -9,9 +9,9 @@ from string import punctuation
 # A voir ce qui est fait des mots avec un hashtag, peut être utiliser TweetTokenizer
 
 class LemmaEnglishTokenizer(object):
-    def __init__(self, remove_non_words=True):
+    def __init__(self,stop_words ,remove_non_words=True):
         self.wnl = WordNetLemmatizer()
-        self.stopwords = set(stopwords.words('english'))
+        self.stopwords = stop_words
         self.words = set(words.words())
         self.remove_non_words = remove_non_words
 
@@ -42,6 +42,8 @@ class FrenchStemTokenizer(object):
         word_list = wordpunct_tokenize(doc)
         # remove stopwords
         word_list = [word for word in word_list if word not in self.stopwords]
+        print(self.stopwords)
+        
         # remove non words
         if (self.remove_non_words):
             word_list = [word for word in word_list if word in self.words]
