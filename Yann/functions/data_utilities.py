@@ -38,7 +38,6 @@ def search_twitter(search_word, date_since, nb_items, language, codes, format_co
 
     try:
         api.verify_credentials()
-        print("Authentification ok")
     except tw.TweepError:
         print("Error during authentification")
 
@@ -68,7 +67,6 @@ def search_author(search_id,  date_since, nb_items, language, codes, format_cols
     
     try:
         api.verify_credentials()
-        print("Authentification ok")
     except tw.TweepError:
         print("Error during authentification")
 
@@ -106,7 +104,7 @@ def add_news_to_dict(search_words, data_folder, news_to_read, dict_dir, format_c
     format_cols : temporary argument until we agree on the format of dataframe'''
     source_df = get_df_news(data_folder, news_to_read, format_cols)
     for search_word in search_words:
-        filtered_df = source_df[source_df[format_cols[0]].apply(lambda article : search_word in article.lower())]
+        filtered_df = source_df[source_df[format_cols[0]].apply(lambda article : search_word.lower() in article.lower())]
         dict_u.add_to_dict(filtered_df, search_word, dict_dir, format_cols)
         
         
