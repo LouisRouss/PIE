@@ -94,8 +94,6 @@ all
 any
 both
 each
-few
-more
 most
 other
 some
@@ -118,3 +116,9 @@ just
 don
 should
 now
+http
+https
+co
+com
+org
+www

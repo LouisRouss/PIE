@@ -8,6 +8,7 @@ from string import punctuation
 
 # A voir ce qui est fait des mots avec un hashtag, peut être utiliser TweetTokenizer
 
+
 class LemmaEnglishTokenizer(object):
     # An English lemmatization tokenizer
     def __init__(self,stop_words ,remove_non_words=True):
@@ -89,3 +90,20 @@ class FrenchStemTokenizer(object):
         # remove non alpha
         word_list = [word for word in word_list if word.isalpha()]
         return [self.st.stem(t) for t in word_list]
+    
+def BagOfWords(text,language, stop_words=None, remove_non_words=False, stemming=False):
+    text=[text]
+    if (stemming==True and language!= 'fr'):
+        print("stemming only available in french")
+        return(None)
+     
+    else:
+        if (stemming==True):
+               tokenizer=FrenchStemTokenizer(stop_words=stop_words,remove_non_words=remove_non_words)
+        else:
+               tokenizer=LemmaTokenizer(language, stop_words=stop_words,remove_non_words=remove_non_words)
+    countvect = CountVectorizer(tokenizer=tokenizer)
+    bow = countvect.fit_transform(text)
+    words = countvect.get_feature_names()
+    return((words,bow.toarray().reshape(-1)))    
+
