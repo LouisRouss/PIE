@@ -4,6 +4,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.corpus import words
 from nltk.stem.snowball import FrenchStemmer
+import pandas as pd
 from string import punctuation
 
 # A voir ce qui est fait des mots avec un hashtag, peut être utiliser TweetTokenizer
@@ -107,3 +108,17 @@ def BagOfWords(text,language, stop_words=None, remove_non_words=False, stemming=
     words = countvect.get_feature_names()
     return((words,bow.toarray().reshape(-1)))    
 
+
+def CreateData(words, bow):
+    # Permet de créer un dataframe a partir d'un BOW
+    new = pd.DataFrame(columns=words)
+    new.loc[0] = bow
+    return new
+
+
+def AddInBow(data, words, bow):
+    # Permet d'ajouter dans un dataframe une nouvelle ligne (nouveau bow) avec d'eventuels nouveaux mots(colonnes)
+    new = CreateData(words, bow)
+    data = pd.concat([data, new], sort=False)
+    data = data.fillna('0')
+    return data

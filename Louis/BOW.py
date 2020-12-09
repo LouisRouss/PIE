@@ -1,5 +1,7 @@
 import Natural_Language_Processing as NLP
+import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
+
 
 def BagOfWords(text,language, stop_words=None, remove_non_words=False, stemming=False):
     text=[text]
@@ -16,3 +18,17 @@ def BagOfWords(text,language, stop_words=None, remove_non_words=False, stemming=
     bow = countvect.fit_transform(sample_fr)
     words = countvect.get_feature_names()
     return((words,bow.toarray().reshape(-1)))
+
+
+def CreateData(words, bow):
+    # Permet de créer un dataframe a partir d'un BOW
+    new = pd.DataFrame(columns=words)
+    new.loc[0] = bow
+    return new
+
+
+def AddInBow(data, words, bow):
+    # Permet d'ajouter dans un dataframe une nouvelle ligne (nouveau bow) avec d'eventuels nouveaux mots(colonnes)
+    new = CreateData(words, bow)
+    data = data.concat([data, new], sort=False)
+    return data
