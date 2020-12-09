@@ -1,7 +1,7 @@
 import tweepy as tw
 import pandas as pd
 
-def search_author(search_id, items, retweet=False):
+def search_author(search_id, items, retweet=False, reply = False,reply = False):
     # Format de date: "YYYY-MM-DD"
     # items : le nombre de tweet max retourné
     # codes = ['API_Key', 'API_Secret_Key', 'Access_Token','Access_Secret_Token']
@@ -16,7 +16,7 @@ def search_author(search_id, items, retweet=False):
     except tw.TweepError:
         print("Error during authentification")
 
-    tweets = tw.Cursor(api.user_timeline, screen_name = search_id, count = items, include_rts = retweet, tweet_mode='extended').items(items)
+    tweets = tw.Cursor(api.user_timeline, screen_name = search_id, count = items, include_rts = retweet,exclude_replies = not reply, tweet_mode='extended').items(items)
 
     list_data = [[tweet.full_text, tweet.user.screen_name, tweet.created_at] for tweet in tweets]
 
