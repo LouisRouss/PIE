@@ -92,7 +92,7 @@ class FrenchStemTokenizer(object):
         word_list = [word for word in word_list if word.isalpha()]
         return [self.st.stem(t) for t in word_list]
     
-def BagOfWords(text,language, stop_words=None, remove_non_words=False, stemming=False):
+def bagofwords(text,language, stop_words=None, remove_non_words=False, stemming=False):
     text=[text]
     if (stemming==True and language!= 'fr'):
         print("stemming only available in french")
@@ -109,16 +109,16 @@ def BagOfWords(text,language, stop_words=None, remove_non_words=False, stemming=
     return((words,bow.toarray().reshape(-1)))    
 
 
-def CreateData(words, bow):
+def createdata(words, bow):
     # Permet de créer un dataframe a partir d'un BOW
     new = pd.DataFrame(columns=words)
     new.loc[0] = bow
     return new
 
 
-def AddInBow(data, words, bow):
+def addinbow(data, words, bow):
     # Permet d'ajouter dans un dataframe une nouvelle ligne (nouveau bow) avec d'eventuels nouveaux mots(colonnes)
-    new = CreateData(words, bow)
+    new = createdata(words, bow)
     data = pd.concat([data, new], sort=False)
-    data = data.fillna('0')
+    data = data.fillna(0)
     return data
