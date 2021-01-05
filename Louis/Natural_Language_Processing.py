@@ -35,7 +35,7 @@ class LemmaEnglishTokenizer(object):
 
 class LemmaTokenizer(object):
     # A multi language lemmatization tokenizer
-    def __init__(self, language, stop_words=None, remove_non_words=True):
+    def __init__(self, language, stop_words=None, remove_non_words=False):
         self.wnl = WordNetLemmatizer()
         if language == 'fr':
             if stop_words is None:
@@ -70,9 +70,12 @@ class LemmaTokenizer(object):
 
 class FrenchStemTokenizer(object):
     # A French Stemmer Tokenizer
-    def __init__(self, remove_non_words=True):
+    def __init__(self,stop_words=None, remove_non_words=False):
         self.st = FrenchStemmer()
-        self.stopwords = set(stopwords.words('french'))
+        if stop_words==None:
+            self.stopwords = set(stopwords.words('french'))
+        else:
+            self.stopwords = stop_words
         self.words = set(words.words())
         self.remove_non_words = remove_non_words
 
@@ -81,7 +84,6 @@ class FrenchStemTokenizer(object):
         word_list = wordpunct_tokenize(doc)
         # remove stopwords
         word_list = [word for word in word_list if word not in self.stopwords]
-        print(self.stopwords)
         
         # remove non words
         if (self.remove_non_words):
