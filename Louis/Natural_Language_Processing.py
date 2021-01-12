@@ -124,3 +124,13 @@ def addinbow(data, words, bow):
     data = pd.concat([data, new], sort=False)
     data = data.fillna(0)
     return data
+
+def createbow(data,language,stop_words=None,remove_non_words=False,stemming=False):
+    #permets de créer un bow à partir d'une liste de texte
+    bag_of_words = pd.DataFrame()
+    for i in range(len(data)):
+        text = data[i]
+        words,BOW = bagofwords(text,language, stop_words=stop_words, remove_non_words=remove_non_words, stemming=stemming)
+        bag_of_words = addinbow(bag_of_words,words,BOW)
+    return bag_of_words
+    
