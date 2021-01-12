@@ -1,8 +1,8 @@
 import tweepy as tw
 import pandas as pd
 
-def search_author(search_id, items, retweet=False, reply = False,reply = False):
-    # Format de date: "YYYY-MM-DD"
+def search_author(search_id, items, retweet=False, reply = False):
+
     # items : le nombre de tweet max retourné
     # codes = ['API_Key', 'API_Secret_Key', 'Access_Token','Access_Secret_Token']
     
