@@ -12,6 +12,7 @@ from sklearn.decomposition import NMF, LatentDirichletAllocation
 from gensim.models import Word2Vec
 
 class LemmaTokenizer(object):
+    '''A tokenizer for english text'''
     def __init__(self, stop_words = None, remove_non_words=True):
         self.wnl = WordNetLemmatizer()
         if stop_words is None:
@@ -35,6 +36,7 @@ class LemmaTokenizer(object):
         return [self.wnl.lemmatize(t) for t in word_list]
     
 class FrenchStemTokenizer(object):
+    '''A tokenizer for french text'''
     # A French Stemmer Tokenizer
     def __init__(self, stop_words=None, remove_non_words=True):
         self.st = FrenchStemmer()
@@ -71,6 +73,7 @@ def print_topics(model, feature_names, n_words):
 
 
 def get_stop_words(words_to_add=[], words_to_delete=[], language = 'en'):
+    '''Returns stop_words argument for get_tokenizer : uses default stop_words of given language to add words_to_add and delete words_to_delete '''
     if language == 'fr':
         stop_words = set(stopwords.words('french'))
     elif language == 'en':
@@ -89,6 +92,7 @@ def get_stop_words(words_to_add=[], words_to_delete=[], language = 'en'):
     return stop_words
 
 def get_tokenizer(stop_words = None, language = 'en'):
+    '''Returns tokenizer of given langauge with given stop_words'''
     if language == 'fr':
         tokenizer = FrenchStemTokenizer(stop_words = stop_words)
     elif language == 'en':
@@ -119,6 +123,7 @@ def df_to_vec(df, stop_words = None, language = 'en', size=200, window=5, min_co
     return model
 
 def df_to_lda(df, n_topics = 5, stop_words = None, language = 'en', TF = True):
+    '''Returns the LDA model of given "ticker" dataframe'''
     text_df = df["Text"]
     tokenizer = get_tokenizer(stop_words, language)
     countvect = CountVectorizer(tokenizer = tokenizer, max_df=0.95, min_df=2)
@@ -132,6 +137,7 @@ def df_to_lda(df, n_topics = 5, stop_words = None, language = 'en', TF = True):
     return lda, countvect, feat2word
 
 def df_to_nmf(df, n_topics=5, stop_words = None, language = 'en'):
+    '''Returns the NMF model of given "ticker" dataframe'''
     bow, countvect, feat2word = df_to_bow(df, stop_words = stop_words, language = language, TFIDF = True)
     nmf = NMF(n_components=n_topics, alpha=.1, l1_ratio=.5).fit(bow)
     return nmf, countvect, feat2word
