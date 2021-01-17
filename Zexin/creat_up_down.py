@@ -2,7 +2,7 @@ import datetime
 import pandas as pd
 import retrieve_data
 
-def creat_up_down(ticker, lookback_minutes = 30,lookforward_minutes = 5,up_down_factor=2.0,percent_factor=0.01, start=None, end=None):
+def creat_up_down(tickers,start,period, lookback_minutes = 30,lookforward_minutes = 5, up_down_factor=2.0, percent_factor=0.01):
     """
     Creates a Pandas DataFrame that imports and calculates
     the percentage returns of an intraday OLHC ticker in last 30 natural days.
@@ -19,6 +19,8 @@ def creat_up_down(ticker, lookback_minutes = 30,lookforward_minutes = 5,up_down_
 
      Args:
         ticker (str): ticker
+        start('YYYY-MM-DD'): start date of period
+        period(int): period of data
         lookback_minutes (int): lookback minutes
         lookforward_minutes (int): lookforward minutes
         up_down_factor (float): up down factor
@@ -28,14 +30,22 @@ def creat_up_down(ticker, lookback_minutes = 30,lookforward_minutes = 5,up_down_
         pd.DataFrame
     """
 
-    today = datetime.datetime.today()
+    date_start = pd.to_datetime(start)
+    if date_start<datetime.datetime.today() - datetime.timedelta(days = 30):
+        print('Only have last 30 days\' data')
+        return
+    date_end = pd.to_datetime(start) + datetime.timedelta(days = period)
     data = pd.DataFrame()
-    for i in range(int(30/7)+1):
-        from_date = today - datetime.timedelta(days = 30 - 7*i)
-        to_date = from_date + datetime.timedelta(days = 7)
-        df = retrieve_data_from_yahoo_finance(tickers, from_date=from_date,to_date=to_date, interval="1m")
-        data = pd.concat([data,df],axis = 0)
-    path_file_data = tickers+"_donnees_"+today.strftime('%Y%m%d')+".csv"
+    if period<30:
+        for i in range(int(period/7)+1):
+            from_date = date_end - datetime.timedelta(days = period - 7*i)
+            to_date = from_date + datetime.timedelta(days = 7)
+            df = retrieve_data_from_yahoo_finance(tickers, from_date=from_date,to_date=to_date, interval="1m")
+            data = pd.concat([data,df],axis = 0)
+    else:
+        print('Only have last 30 days\' data')
+        return
+    path_file_data = tickers+"_donnees_"+date_start.strftime('%Y%m%d')+'_'+date_end.strftime('%Y%m%d')+".csv"
 #     if path_file_data:
 #         data.to_csv(path_file_data)
     ts_df = data[['Close']].copy()
@@ -59,7 +69,7 @@ def creat_up_down(ticker, lookback_minutes = 30,lookforward_minutes = 5,up_down_
         up_tot = up_tot | col
     ts_df["UpDown"] = down_tot & up_tot
     ts_df["UpDown"] = ts_df["UpDown"].astype(int)
-    path_file_updown = tickers+"_updown_"+today.strftime('%Y%m%d')+".csv"
+    path_file_updown = tickers+"_updown_"+date_start.strftime('%Y%m%d')+'_'+date_end.strftime('%Y%m%d')+".csv"
 #     if path_file_updown:
 #         data.to_csv(path_file_updown)
     return ts_df
