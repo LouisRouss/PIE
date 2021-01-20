@@ -95,6 +95,7 @@ class FrenchStemTokenizer(object):
         return [self.st.stem(t) for t in word_list]
     
 def bagofwords(text,language, stop_words=None, remove_non_words=False, stemming=False):
+    #transforme une phrase (un string) en bow
     text=[text]
     if (stemming==True and language!= 'fr'):
         print("stemming only available in french")
@@ -133,4 +134,26 @@ def createbow(data,language,stop_words=None,remove_non_words=False,stemming=Fals
         words,BOW = bagofwords(text,language, stop_words=stop_words, remove_non_words=remove_non_words, stemming=stemming)
         bag_of_words = addinbow(bag_of_words,words,BOW)
     return bag_of_words
+
+def get_tokenizer(stop_words = None, language = 'en'):
+    if language == 'fr':
+        tokenizer = FrenchStemTokenizer(stop_words = stop_words)
+    elif language == 'en':
+        tokenizer = LemmaTokenizer(stop_words = stop_words)
+    else :
+        raise LanguageError("Language not supported")
+    return tokenizer
+
+def df_to_bow(df, stop_words = None, language = 'en', TFIDF = True):
+    '''Returns the BOW (model and feature mapping) of a given "ticker" dataframe. 
+    If TFIDF is true, the BOW is weighted with "Term frequency times inverse document frequency" 
+    (generally better performances)'''
+    text_df = df["Text"]
+    tokenizer = get_tokenizer(stop_words, language)
+    countvect = CountVectorizer(tokenizer = tokenizer, max_df=0.95, min_df=2)
+    bow = countvect.fit_transform(text_df)
+    feat2word = {v: k for k, v in countvect.vocabulary_.items()}
+    if TFIDF :
+        bow = TfidfTransformer().fit_transform(bow)
+    return bow, countvect, feat2word
     
