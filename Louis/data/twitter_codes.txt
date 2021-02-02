@@ -1,0 +1,11 @@
+API key : I5exKno5D4drEQK2uShWDRFfm
+API secret key : XNe8j4iWBPKDpl1jSgqawgCyxzscDvfneDMYibimLeu1ukwoGk
+Access token: 1326944909207728129-S6ogCIOnY0fdTKJe4GyQm866rTsm0c
+Access token secret: Np5teHlej9VsYrBueZtWmg9kZbxMKzEp8xtjlSJFT79Qy
+Bearer token : AAAAAAAAAAAAAAAAAAAAAF%2B4JgEAAAAAjodBK7k%2BYuwG5th2mQONmNb%2Bgx0%3DrfI7RhNbAY5ptUhMkRpPYoZ7gJYVv7iNtTLATxwqzpgpkYalkR
+
+Account: 
+pie.sxs.trading@gmail.com
+Password:
+IsaeSupaero2020
+
