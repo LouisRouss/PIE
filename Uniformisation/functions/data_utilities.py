@@ -2,7 +2,6 @@ import tweepy as tw
 import pandas as pd
 import numpy as np
 import sys; sys.path.insert(1, '../functions')
-from functions import dict_utilities as dict_u
 import re
 ############################## Sub-functions ##############################
 
