@@ -6,6 +6,7 @@ from nltk import wordpunct_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.corpus import words
+from nltk.stem.snowball import FrenchStemmer
 from string import punctuation
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.decomposition import NMF, LatentDirichletAllocation
@@ -120,7 +121,7 @@ def df_to_bow(df, stop_words = None, language = 'en', TFIDF = True):
 def df_to_bow_prediction(columns, df, stop_words = None ,language = 'en', TFIDF = True):
     '''Return the BOW of a DataFrame of texts , the BOW is made as such as a ML model trained on a training BOW can predict the sentiment of       these texts
       columns : the list of the words used in the training bow
-      df : DataFrame of texts
+      df : DataFrame of texts one's wants to predict
       If TFIDF is true, the BOW is weighted with "Term frequency times inverse document frequency" 
       (generally better performances)
     '''
