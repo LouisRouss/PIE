@@ -11,6 +11,7 @@ from string import punctuation
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.decomposition import NMF, LatentDirichletAllocation
 from gensim.models import Word2Vec
+from joblib import dump, load
 
 class LemmaTokenizer(object):
     '''A tokenizer for english text'''
@@ -162,3 +163,16 @@ def df_to_nmf(df, n_topics=5, stop_words = None, language = 'en'):
     bow, countvect, feat2word = df_to_bow(df, stop_words = stop_words, language = language, TFIDF = True)
     nmf = NMF(n_components=n_topics, alpha=.1, l1_ratio=.5).fit(bow)
     return nmf, countvect, feat2word
+
+def save_model(model,path):
+    '''Save the sklearn model at the path indicated, the path got to end with .joblib (the type of the saved file)'''
+    dump(model,path)
+
+def load_model(path):
+    '''Load and return the sklearn model located at the path specified'''
+    model = load(path)
+    return model
+    
+    
+    
+    

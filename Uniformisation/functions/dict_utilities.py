@@ -32,7 +32,7 @@ def check_df_format(df_to_add, format_cols):
         assert(format_cols[i] == df_to_add.columns.values[i]), f"Column mismatch : {df_to_add.columns.values[i]} when {format_cols(i)} was expected"
 
 
-def add_to_dict(df_to_add, search_word, dict_dir, format_cols):
+def add_to_dict(df_to_add, search_word, dict_dir, format_cols=["Text", "Author", "Date"]):
     '''Adds df_to_add dataframe to data dictionary in dict_dir with ticker search_word
     format_cols : temporary argument until we agree on the format of dataframe'''
     data_dict = get_dict(dict_dir)
