@@ -108,19 +108,38 @@ def df_to_bow(df, stop_words = None, language = 'en', TFIDF = True):
     text_df = df["Text"]
     tokenizer = get_tokenizer(stop_words, language)
     countvect = CountVectorizer(tokenizer = tokenizer, max_df=0.95, min_df=2)
-    bow = countvect.fit_transform(text_df)
+    X = countvect.fit_transform(text_df)
     feat2word = {v: k for k, v in countvect.vocabulary_.items()}
     if TFIDF :
-        bow = TfidfTransformer().fit_transform(bow)
-    return bow, countvect, feat2word
+        X = TfidfTransformer().fit_transform(X)
+    return X, countvect, feat2word
+
+def get_bow_features(df, stop_words = None, language = 'en', TFIDF = True):
+    return df_to_bow(df, stop_words, language, TFIDF)[0]
 
 def df_to_vec(df, stop_words = None, language = 'en', size=200, window=5, min_count=1):
     '''Returns the Word2Vec model of a given "ticker" dataframe.'''
     text_df = df["Text"]
-    tokenizer = get_tokenizer(text_df, stop_words, language)
+    tokenizer = get_tokenizer(stop_words, language)
     text_for_word2vec=[tokenizer(text) for text in text_df]
     model = Word2Vec(text_for_word2vec,size=size,window=window,min_count=min_count)
-    return model
+    
+    def get_vect(word, model):
+        try:
+            return model.wv[word]
+        except KeyError:
+            return numpy.zeros((model.vector_size,))
+
+    def word2vec_features(articles, model):
+        features = np.vstack([sum(get_vect(word, model) for word in article) for article in articles])
+        return features
+
+    X = word2vec_features(text_for_word2vec, model)
+    
+    return X, model
+
+def get_w2v_features(df, stop_words = None, language = 'en', size=200, window=5, min_count=1):
+    return df_to_vec(df, stop_words, language, size, window, min_count)[0]
 
 def df_to_lda(df, n_topics = 5, stop_words = None, language = 'en', TF = True):
     '''Returns the LDA model of given "ticker" dataframe'''
@@ -133,11 +152,18 @@ def df_to_lda(df, n_topics = 5, stop_words = None, language = 'en', TF = True):
         bow = TfidfTransformer(use_idf = False).fit_transform(bow)
     lda = LatentDirichletAllocation(n_components=n_topics, max_iter=5, learning_method='online',
                                     learning_offset=50., random_state=0)
-    lda.fit(bow)
-    return lda, countvect, feat2word
+    X = lda.fit_transform(bow)
+    return X, lda, countvect, feat2word
+
+def get_lda_features(df, n_topics = 5, stop_words = None, language = 'en', TF = True):
+    return df_to_lda(df, n_topics, stop_words, language, TF)[0]
 
 def df_to_nmf(df, n_topics=5, stop_words = None, language = 'en'):
     '''Returns the NMF model of given "ticker" dataframe'''
     bow, countvect, feat2word = df_to_bow(df, stop_words = stop_words, language = language, TFIDF = True)
-    nmf = NMF(n_components=n_topics, alpha=.1, l1_ratio=.5).fit(bow)
-    return nmf, countvect, feat2word
+    nmf = NMF(n_components=n_topics, alpha=.1, l1_ratio=.5)
+    X = nmf.fit_transform(bow)
+    return X, nmf, countvect, feat2word
+
+def get_nmf_features(df, n_topics=5, stop_words = None, language = 'en'):
+    return df_to_nmf(df, n_topics, stop_words, language)[0]
