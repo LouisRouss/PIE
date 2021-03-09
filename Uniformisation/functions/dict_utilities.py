@@ -2,11 +2,16 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
+from shutil import copyfile
+
 
 def reset_dict(dict_dir):
     '''Empties the data dictionary situated in dict_dir directory'''
     open(dict_dir, 'wb').close()
 
+def backup_dict(dict_dir, backup_dir):
+    copyfile(dict_dir, backup_dir)
+    
 def get_dict(dict_dir):
     '''Gets dictionary from pkl file in dict_dir directory'''
     f = open(dict_dir,"r+b")
@@ -38,10 +43,10 @@ def add_to_dict(df_to_add, search_word, dict_dir, format_cols=["Text", "Author",
     data_dict = get_dict(dict_dir)
     keys = data_dict.keys()
     
-    check_df_format(df_to_add, format_cols)
+    #check_df_format(df_to_add, format_cols)
     search_word = search_word.lower()
     if search_word in keys:
-        data_dict[search_word] = pd.merge(data_dict[search_word],df_to_add ,how='outer', on=format_cols[0])
+        data_dict[search_word] = pd.concat([data_dict[search_word],df_to_add]).drop_duplicates()
     else :
         data_dict[search_word] = df_to_add
     dump_dict(data_dict, dict_dir)

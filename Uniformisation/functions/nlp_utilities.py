@@ -114,10 +114,10 @@ def df_to_bow(df, stop_words = None, language = 'en', TFIDF = True):
     feat2word = {v: k for k, v in countvect.vocabulary_.items()}
     if TFIDF :
         bow = TfidfTransformer().fit_transform(bow)
-    columns = [feat2word[i] for i in range(len(feat2word))]
-    bow = pd.DataFrame(bow.toarray())
-    bow.columns = columns
-    return bow
+    #columns = [feat2word[i] for i in range(len(feat2word))]
+    #bow = pd.DataFrame(bow.toarray())
+    #bow.columns = columns
+    return bow,countvect,feat2word
 
 def df_to_bow_prediction(columns, df, stop_words = None ,language = 'en', TFIDF = True):
     '''Return the BOW of a DataFrame of texts , the BOW is made as such as a ML model trained on a training BOW can predict the sentiment of       these texts
@@ -135,6 +135,9 @@ def df_to_bow_prediction(columns, df, stop_words = None ,language = 'en', TFIDF 
                 dataframe_to_return.loc[i,word] = bow_validation[word][i]
     dataframe_to_return = dataframe_to_return.fillna(0)
     return dataframe_to_return
+    
+def get_bow_features(df, stop_words = None, language = 'en', TFIDF = True):
+    return df_to_bow(df, stop_words, language, TFIDF)[0]
     
 def df_to_vec(df, stop_words = None, language = 'en', size=200, window=5, min_count=1):
     '''Returns the Word2Vec model of a given "ticker" dataframe.'''
