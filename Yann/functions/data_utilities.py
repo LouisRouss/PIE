@@ -112,15 +112,19 @@ def get_label(example, timeshift = 5, holidays = None):
     day_before = np.busday_offset(date.astype("datetime64[D]"), -2, roll='backward', holidays = holidays)
 
     old = date<(np.datetime64('today') - np.timedelta64(31, 'D'))
+    too_new = date>(np.datetime64('today') - np.timedelta64(2, 'D'))
     #We get the data from Yahoo Finance (30m interval)
     if old :
         stock_data = retrieve_data_from_yahoo_finance("GOOGL", from_date=day_before.astype("datetime64[D]"),\
                                                           to_date=next_day.astype("datetime64[D]"), interval="1d")
-    else :
+    elif not too_new :
         stock_data = retrieve_data_from_yahoo_finance("GOOGL", from_date=day_before.astype("datetime64[D]"),\
                                                           to_date=next_day.astype("datetime64[D]"), interval="30m")
+    else :
+        return None
     #We get the corresponding index of our data's date (using a generator is more time efficient)
     datetype = "datetime64[D]" if old else "datetime64[m]"
+              
     tweet_idx = next(i for i in range(1, len(stock_data)-1) \
                      if date>=np.datetime64(stock_data.index.values[i]).astype(datetype) \
                      and date<np.datetime64(stock_data.index.values[i+1]).astype(datetype))
